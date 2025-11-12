@@ -28,7 +28,7 @@ const { text } = await generateText({
 console.log(text);
 ```
 
-**That's it!** Get your free API key from the [Valyu Platform](https://platform.valyu.ai) - over 1000 free query retrievals to get started.
+**That's it!** Get your free API key from the [Valyu Platform](https://platform.valyu.ai) - $10 in free credits when you sign up.
 
 ## Need Specialized Search?
 
@@ -412,7 +412,7 @@ const search = webSearch(config);
 - **Flexible Configuration**: Control costs, relevance thresholds, and data sources
 - **Type-Safe**: Full TypeScript support with detailed type definitions
 - **Easy Integration**: Works seamlessly with Vercel AI SDK
-- **Generous Free Tier**: Over 1000 free query retrievals to get started
+- **Generous Free Tier**: $10 in free credits when you sign up
 
 ## Cost Control
 
