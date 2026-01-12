@@ -8,6 +8,9 @@ export { secSearch } from "./sec-search.js";
 export { economicsSearch } from "./economics-search.js";
 export { companyResearch } from "./company-research.js";
 
+// Export datasources discovery tools
+export { datasources, datasourcesCategories } from "./datasources.js";
+
 // Export all types
 export type {
   ValyuBaseConfig,
@@ -25,3 +28,4 @@ export type {
   ValyuSourceType,
   ValyuDataType,
 } from "./types.js";
+export type { ValyuDatasourcesConfig } from "./datasources.js";
