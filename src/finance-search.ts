@@ -75,6 +75,9 @@ export function financeSearch(config: ValyuFinanceSearchConfig = {}) {
       if (otherOptions.category) {
         requestBody.category = otherOptions.category;
       }
+      if (otherOptions.responseLength !== undefined) {
+        requestBody.response_length = otherOptions.responseLength;
+      }
 
       // Call Valyu API
       try {

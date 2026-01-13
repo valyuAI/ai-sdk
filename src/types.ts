@@ -1,4 +1,18 @@
 /**
+ * Response length presets for controlling content size per result
+ * - short: ~25,000 characters
+ * - medium: ~50,000 characters
+ * - large: ~100,000 characters
+ * - max: Full content (no limit)
+ */
+export type ValyuResponseLengthPreset = "short" | "medium" | "large" | "max";
+
+/**
+ * Response length can be a preset or a specific character count
+ */
+export type ValyuResponseLength = ValyuResponseLengthPreset | number;
+
+/**
  * Base configuration options for all Valyu search tools
  */
 export interface ValyuBaseConfig {
@@ -35,6 +49,16 @@ export interface ValyuBaseConfig {
    * Flag for agentic integration (default: true)
    */
   isToolCall?: boolean;
+
+  /**
+   * Controls the length of content returned per result.
+   * Can be a preset ('short', 'medium', 'large', 'max') or a specific character count.
+   * - short: ~25,000 characters
+   * - medium: ~50,000 characters
+   * - large: ~100,000 characters
+   * - max: Full content (no limit)
+   */
+  responseLength?: ValyuResponseLength;
 }
 
 /**

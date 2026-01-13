@@ -27,5 +27,7 @@ export type {
   ValyuResultsBySource,
   ValyuSourceType,
   ValyuDataType,
+  ValyuResponseLength,
+  ValyuResponseLengthPreset,
 } from "./types.js";
 export type { ValyuDatasourcesConfig } from "./datasources.js";

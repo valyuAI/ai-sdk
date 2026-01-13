@@ -60,6 +60,9 @@ export function secSearch(config: ValyuSecSearchConfig = {}) {
       if (otherOptions.category) {
         requestBody.category = otherOptions.category;
       }
+      if (otherOptions.responseLength !== undefined) {
+        requestBody.response_length = otherOptions.responseLength;
+      }
 
       // Call Valyu API
       try {
