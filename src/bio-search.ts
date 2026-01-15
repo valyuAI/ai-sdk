@@ -34,12 +34,17 @@ export function bioSearch(config: ValyuBioSearchConfig = {}) {
       "valyu/valyu-medrxiv",
       "valyu/valyu-clinical-trials",
       "valyu/valyu-drug-labels",
+      "valyu/valyu-chembl",
+      "valyu/valyu-drugbank",
+      "valyu/valyu-open-targets",
+      "valyu/valyu-npi-registry",
+      "valyu/valyu-who-icd",
     ],
     ...otherOptions
   } = config;
 
   return tool({
-    description: "Search biomedical literature from PubMed, clinical trials, and FDA drug labels. The API handles natural language - use simple queries.",
+    description: "Search biomedical and healthcare data including PubMed, clinical trials, FDA drug labels, ChEMBL compounds, DrugBank, Open Targets, NPI registry, and WHO ICD codes. The API handles natural language - use simple queries.",
     inputSchema: z.object({
       query: z.string().min(1).max(500).describe("Natural language query (e.g., 'GLP-1 agonists for weight loss', 'Phase 3 melanoma immunotherapy trials')"),
     }),
