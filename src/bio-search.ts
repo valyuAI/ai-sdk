@@ -53,7 +53,7 @@ export function bioSearch(config: ValyuBioSearchConfig = {}) {
         throw new Error("VALYU_API_KEY is required. Set it in environment variables or pass it in config.");
       }
 
-      // Build the request body for Valyu API
+      // Build request body for Valyu API
       const requestBody: any = {
         query,
         search_type: searchType,
