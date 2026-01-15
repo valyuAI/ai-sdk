@@ -42,3 +42,6 @@ coverage/
 # Misc
 *.local
 
+# Claude
+.claude/
+
