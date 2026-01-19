@@ -26,8 +26,9 @@ export interface ValyuBaseConfig {
    * Search type (default: "proprietary")
    * - proprietary: Access premium sources including academic papers, financial data, etc.
    * - web: Standard web search
+   * - all: Search across all sources
    */
-  searchType?: "proprietary" | "web";
+  searchType?: "proprietary" | "web" | "all";
 
   /**
    * Maximum number of results to return (default: 10)
@@ -62,11 +63,26 @@ export interface ValyuBaseConfig {
 }
 
 /**
+ * Configuration for universal search tool
+ */
+export interface ValyuSearchConfig extends ValyuBaseConfig {
+  /**
+   * List of specific sources to include
+   */
+  includedSources?: string[];
+
+  /**
+   * Category to focus the search on
+   */
+  category?: string;
+}
+
+/**
  * Configuration for web search tool
  */
 export interface ValyuWebSearchConfig extends ValyuBaseConfig {
   /**
-   * List of specific sources to include (e.g., ["valyu/web-general"])
+   * List of specific sources to include
    */
   includedSources?: string[];
 
@@ -82,7 +98,6 @@ export interface ValyuWebSearchConfig extends ValyuBaseConfig {
 export interface ValyuFinanceSearchConfig extends ValyuBaseConfig {
   /**
    * List of financial sources to include
-   * Examples: ["valyu/financial-reports", "valyu/market-data"]
    */
   includedSources?: string[];
 
@@ -93,12 +108,11 @@ export interface ValyuFinanceSearchConfig extends ValyuBaseConfig {
 }
 
 /**
- * Configuration for research paper search tool
+ * Configuration for academic paper search tool
  */
-export interface ValyuPaperSearchConfig extends ValyuBaseConfig {
+export interface ValyuAcademicSearchConfig extends ValyuBaseConfig {
   /**
    * List of academic sources to include
-   * Examples: ["valyu/valyu-arxiv", "valyu/academic-journals"]
    */
   includedSources?: string[];
 
@@ -109,17 +123,16 @@ export interface ValyuPaperSearchConfig extends ValyuBaseConfig {
 }
 
 /**
- * Configuration for biomedical search tool
+ * Configuration for life sciences search tool
  */
-export interface ValyuBioSearchConfig extends ValyuBaseConfig {
+export interface ValyuLifeSciencesSearchConfig extends ValyuBaseConfig {
   /**
-   * List of biomedical sources to include
-   * Examples: ["valyu/valyu-pubmed", "valyu/clinical-trials", "valyu/fda-labels"]
+   * List of life sciences sources to include
    */
   includedSources?: string[];
 
   /**
-   * Category to focus on (e.g., "clinical-trials", "drug-labels", "medical-research")
+   * Category to focus on (e.g., "clinical-trials", "genomics", "drug-discovery")
    */
   category?: string;
 }
@@ -130,7 +143,6 @@ export interface ValyuBioSearchConfig extends ValyuBaseConfig {
 export interface ValyuPatentSearchConfig extends ValyuBaseConfig {
   /**
    * List of patent sources to include
-   * Examples: ["valyu/patents-us", "valyu/patents-international"]
    */
   includedSources?: string[];
 
@@ -141,12 +153,11 @@ export interface ValyuPatentSearchConfig extends ValyuBaseConfig {
 }
 
 /**
- * Configuration for SEC filings search tool
+ * Configuration for SEC search tool
  */
 export interface ValyuSecSearchConfig extends ValyuBaseConfig {
   /**
    * List of SEC filing sources to include
-   * Examples: ["valyu/valyu-sec-filings"]
    */
   includedSources?: string[];
 
@@ -162,7 +173,6 @@ export interface ValyuSecSearchConfig extends ValyuBaseConfig {
 export interface ValyuEconomicsSearchConfig extends ValyuBaseConfig {
   /**
    * List of economics sources to include
-   * Examples: ["valyu/valyu-bls", "valyu/valyu-fred", "valyu/valyu-world-bank"]
    */
   includedSources?: string[];
 
@@ -187,6 +197,27 @@ export interface ValyuCompanyResearchConfig {
    * This controls the cost limit for each section of the research report
    */
   dataMaxPrice?: number;
+}
+
+/**
+ * Configuration for contents extraction tool
+ */
+export interface ValyuContentsConfig {
+  /**
+   * Your Valyu API key. Get one at https://platform.valyu.ai
+   * Defaults to process.env.VALYU_API_KEY
+   */
+  apiKey?: string;
+
+  /**
+   * Response length preset (default: "max")
+   */
+  responseLength?: ValyuResponseLengthPreset;
+
+  /**
+   * Extraction effort level (default: "auto")
+   */
+  extractEffort?: "auto" | "low" | "medium" | "high";
 }
 
 /**

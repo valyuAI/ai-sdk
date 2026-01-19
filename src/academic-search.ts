@@ -1,29 +1,29 @@
 import { tool } from "ai";
 import { z } from "zod";
-import type { ValyuPaperSearchConfig } from "./types.js";
+import type { ValyuAcademicSearchConfig } from "./types.js";
 
 /**
- * Creates a research paper search tool powered by Valyu for use with Vercel AI SDK
+ * Creates an academic paper search tool powered by Valyu for use with Vercel AI SDK
  *
- * @param config - Configuration options for the Valyu paper search
+ * @param config - Configuration options for the Valyu academic search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
  *
  * @example
  * ```ts
  * import { generateText } from "ai";
- * import { paperSearch } from "@valyu/ai-sdk";
+ * import { academicSearch } from "@valyu/ai-sdk";
  * import { openai } from "@ai-sdk/openai";
  *
  * const { text } = await generateText({
  *   model: openai('gpt-5'),
  *   prompt: 'Find recent research papers on transformer architectures',
  *   tools: {
- *     paperSearch: paperSearch({ maxNumResults: 5 }),
+ *     academicSearch: academicSearch({ maxNumResults: 5 }),
  *   },
  * });
  * ```
  */
-export function paperSearch(config: ValyuPaperSearchConfig = {}) {
+export function academicSearch(config: ValyuAcademicSearchConfig = {}) {
   const {
     apiKey = process.env.VALYU_API_KEY,
     searchType = "proprietary",
@@ -38,16 +38,15 @@ export function paperSearch(config: ValyuPaperSearchConfig = {}) {
   } = config;
 
   return tool({
-    description: "Search academic papers from arXiv, PubMed, bioRxiv, and medRxiv. The API handles semantic search - use simple natural language, not keyword stuffing.",
+    description: "Search academic papers and preprints from arXiv, PubMed, bioRxiv, and medRxiv. Use for research papers across all scientific disciplines.",
     inputSchema: z.object({
-      query: z.string().min(1).max(500).describe("Natural language query (e.g., 'psilocybin effects on lifespan in mice', 'CRISPR cancer therapy trials')"),
+      query: z.string().min(1).max(500).describe("Natural language query (e.g., 'transformer architectures for protein folding', 'CRISPR gene editing mechanisms')"),
     }),
     execute: async ({ query }) => {
       if (!apiKey) {
         throw new Error("VALYU_API_KEY is required. Set it in environment variables or pass it in config.");
       }
 
-      // Build the request body for Valyu API
       const requestBody: any = {
         query,
         search_type: searchType,
@@ -55,7 +54,6 @@ export function paperSearch(config: ValyuPaperSearchConfig = {}) {
         included_sources: includedSources,
       };
 
-      // Add optional parameters
       if (otherOptions.maxPrice !== undefined) {
         requestBody.max_price = otherOptions.maxPrice;
       }
@@ -69,7 +67,6 @@ export function paperSearch(config: ValyuPaperSearchConfig = {}) {
         requestBody.response_length = otherOptions.responseLength;
       }
 
-      // Call Valyu API
       try {
         const response = await fetch("https://api.valyu.ai/v1/deepsearch", {
           method: "POST",
@@ -85,12 +82,11 @@ export function paperSearch(config: ValyuPaperSearchConfig = {}) {
           throw new Error(`Valyu API error: ${response.status} - ${errorText}`);
         }
 
-        // Return the full API response
         const data = await response.json();
         return data;
       } catch (error) {
         if (error instanceof Error) {
-          throw new Error(`Failed to search research papers with Valyu: ${error.message}`);
+          throw new Error(`Failed to search academic papers with Valyu: ${error.message}`);
         }
         throw error;
       }
