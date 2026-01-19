@@ -1,60 +1,65 @@
 import { tool } from "ai";
 import { z } from "zod";
-import type { ValyuFinanceSearchConfig } from "./types.js";
+import type { ValyuLifeSciencesSearchConfig } from "./types.js";
 
 /**
- * Creates a finance search tool powered by Valyu for use with Vercel AI SDK
+ * Creates a life sciences search tool powered by Valyu for use with Vercel AI SDK
  *
- * @param config - Configuration options for the Valyu finance search
+ * @param config - Configuration options for the Valyu life sciences search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
  *
  * @example
  * ```ts
  * import { generateText } from "ai";
- * import { financeSearch } from "@valyu/ai-sdk";
+ * import { lifeSciencesSearch } from "@valyu/ai-sdk";
  * import { openai } from "@ai-sdk/openai";
  *
  * const { text } = await generateText({
  *   model: openai('gpt-5'),
- *   prompt: 'What are the latest earnings reports for Apple?',
+ *   prompt: 'Find clinical trials for GLP-1 agonists in obesity',
  *   tools: {
- *     financeSearch: financeSearch({ maxNumResults: 5 }),
+ *     lifeSciencesSearch: lifeSciencesSearch({ maxNumResults: 5 }),
  *   },
  * });
  * ```
  */
-export function financeSearch(config: ValyuFinanceSearchConfig = {}) {
+export function lifeSciencesSearch(config: ValyuLifeSciencesSearchConfig = {}) {
   const {
     apiKey = process.env.VALYU_API_KEY,
     searchType = "proprietary",
     maxNumResults = 5,
     includedSources = [
-      "valyu/valyu-stocks",
-      "valyu/valyu-sec-filings",
-      "valyu/valyu-earnings-US",
-      "valyu/valyu-balance-sheet-US",
-      "valyu/valyu-income-statement-US",
-      "valyu/valyu-cash-flow-US",
-      "valyu/valyu-dividends-US",
-      "valyu/valyu-insider-transactions-US",
-      "valyu/valyu-market-movers-US",
-      "valyu/valyu-crypto",
-      "valyu/valyu-forex",
+      // Clinical and regulatory
+      "valyu/valyu-clinical-trials",
+      "valyu/valyu-drug-labels",
+      // Pharmaceutical databases
+      "valyu/valyu-chembl",
+      "valyu/valyu-pubchem",
+      "valyu/valyu-drugbank",
+      "valyu/valyu-open-targets",
+      // Healthcare
+      "valyu/valyu-npi-registry",
+      "valyu/valyu-who-icd",
+      // Genomics (NCBI)
+      "valyu/valyu-ncbi-gene",
+      "valyu/valyu-ncbi-snp",
+      "valyu/valyu-ncbi-clinvar",
+      "valyu/valyu-ncbi-geo",
+      "valyu/valyu-ncbi-sra",
     ],
     ...otherOptions
   } = config;
 
   return tool({
-    description: "Search financial data: stock prices, earnings, balance sheets, income statements, cash flows, SEC filings, dividends, insider transactions, crypto, and forex. Use economicsSearch for BLS, FRED, and World Bank data.",
+    description: "Search life sciences databases including clinical trials, drug data (ChEMBL, DrugBank, PubChem), FDA labels, genomics (NCBI Gene, SNP, ClinVar, GEO, SRA), and healthcare data (NPI registry, WHO ICD codes). Use for biomedical research, drug discovery, and genomics queries.",
     inputSchema: z.object({
-      query: z.string().min(1).max(500).describe("Natural language query (e.g., 'Apple stock price Q1-Q3 2020', 'Tesla revenue last 4 quarters')"),
+      query: z.string().min(1).max(500).describe("Natural language query (e.g., 'BRCA1 mutations in breast cancer', 'Phase 3 melanoma immunotherapy trials', 'GLP-1 agonist mechanisms')"),
     }),
     execute: async ({ query }) => {
       if (!apiKey) {
         throw new Error("VALYU_API_KEY is required. Set it in environment variables or pass it in config.");
       }
 
-      // Build the request body for Valyu API
       const requestBody: any = {
         query,
         search_type: searchType,
@@ -62,7 +67,6 @@ export function financeSearch(config: ValyuFinanceSearchConfig = {}) {
         included_sources: includedSources,
       };
 
-      // Add optional parameters
       if (otherOptions.maxPrice !== undefined) {
         requestBody.max_price = otherOptions.maxPrice;
       }
@@ -76,7 +80,6 @@ export function financeSearch(config: ValyuFinanceSearchConfig = {}) {
         requestBody.response_length = otherOptions.responseLength;
       }
 
-      // Call Valyu API
       try {
         const response = await fetch("https://api.valyu.ai/v1/deepsearch", {
           method: "POST",
@@ -92,12 +95,11 @@ export function financeSearch(config: ValyuFinanceSearchConfig = {}) {
           throw new Error(`Valyu API error: ${response.status} - ${errorText}`);
         }
 
-        // Return the full API response
         const data = await response.json();
         return data;
       } catch (error) {
         if (error instanceof Error) {
-          throw new Error(`Failed to search financial data with Valyu: ${error.message}`);
+          throw new Error(`Failed to search life sciences data with Valyu: ${error.message}`);
         }
         throw error;
       }

@@ -1,68 +1,54 @@
 import { tool } from "ai";
 import { z } from "zod";
-import type { ValyuBioSearchConfig } from "./types.js";
+import type { ValyuSearchConfig } from "./types.js";
 
 /**
- * Creates a biomedical search tool powered by Valyu for use with Vercel AI SDK
+ * Creates a universal search tool powered by Valyu for use with Vercel AI SDK
  *
- * @param config - Configuration options for the Valyu biomedical search
+ * @param config - Configuration options for Valyu search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
  *
  * @example
  * ```ts
  * import { generateText } from "ai";
- * import { bioSearch } from "@valyu/ai-sdk";
+ * import { search } from "@valyu/ai-sdk";
  * import { openai } from "@ai-sdk/openai";
  *
  * const { text } = await generateText({
  *   model: openai('gpt-5'),
- *   prompt: 'Find clinical trials for cancer immunotherapy',
+ *   prompt: 'What happened in San Francisco last week?',
  *   tools: {
- *     bioSearch: bioSearch({ maxNumResults: 5 }),
+ *     search: search({ maxNumResults: 5 }),
  *   },
  * });
  * ```
  */
-export function bioSearch(config: ValyuBioSearchConfig = {}) {
+export function search(config: ValyuSearchConfig = {}) {
   const {
     apiKey = process.env.VALYU_API_KEY,
-    searchType = "proprietary",
+    searchType = "all",
     maxNumResults = 5,
-    includedSources = [
-      "valyu/valyu-pubmed",
-      "valyu/valyu-biorxiv",
-      "valyu/valyu-medrxiv",
-      "valyu/valyu-clinical-trials",
-      "valyu/valyu-drug-labels",
-      "valyu/valyu-chembl",
-      "valyu/valyu-pubchem",
-      "valyu/valyu-drugbank",
-      "valyu/valyu-open-targets",
-      "valyu/valyu-npi-registry",
-      "valyu/valyu-who-icd",
-    ],
     ...otherOptions
   } = config;
 
   return tool({
-    description: "Search biomedical and healthcare data including PubMed, clinical trials, FDA drug labels, ChEMBL compounds, PubChem, DrugBank, Open Targets, NPI registry, and WHO ICD codes. The API handles natural language - use simple queries.",
+    description: "Search across all Valyu sources including web, academic papers, financial data, and proprietary datasets. Use this as a general-purpose search when you need broad coverage.",
     inputSchema: z.object({
-      query: z.string().min(1).max(500).describe("Natural language query (e.g., 'GLP-1 agonists for weight loss', 'Phase 3 melanoma immunotherapy trials')"),
+      query: z.string().min(1).max(500).describe("Natural language query"),
+      includedSources: z.array(z.string()).optional().describe("Restrict search to specific domains or sources (e.g., ['nature.com', 'arxiv.org']). Cannot be used with excludedSources."),
+      excludedSources: z.array(z.string()).optional().describe("Exclude specific domains or sources from results (e.g., ['reddit.com', 'quora.com']). Cannot be used with includedSources."),
     }),
-    execute: async ({ query }) => {
+    execute: async ({ query, includedSources, excludedSources }) => {
       if (!apiKey) {
         throw new Error("VALYU_API_KEY is required. Set it in environment variables or pass it in config.");
       }
 
-      // Build request body for Valyu API
       const requestBody: any = {
         query,
         search_type: searchType,
         max_num_results: maxNumResults,
-        included_sources: includedSources,
       };
 
-      // Add optional parameters
       if (otherOptions.maxPrice !== undefined) {
         requestBody.max_price = otherOptions.maxPrice;
       }
@@ -75,8 +61,15 @@ export function bioSearch(config: ValyuBioSearchConfig = {}) {
       if (otherOptions.responseLength !== undefined) {
         requestBody.response_length = otherOptions.responseLength;
       }
+      if (includedSources && includedSources.length > 0) {
+        requestBody.included_sources = includedSources;
+      } else if (otherOptions.includedSources && otherOptions.includedSources.length > 0) {
+        requestBody.included_sources = otherOptions.includedSources;
+      }
+      if (excludedSources && excludedSources.length > 0) {
+        requestBody.excluded_sources = excludedSources;
+      }
 
-      // Call Valyu API
       try {
         const response = await fetch("https://api.valyu.ai/v1/deepsearch", {
           method: "POST",
@@ -92,12 +85,11 @@ export function bioSearch(config: ValyuBioSearchConfig = {}) {
           throw new Error(`Valyu API error: ${response.status} - ${errorText}`);
         }
 
-        // Return the full API response
         const data = await response.json();
         return data;
       } catch (error) {
         if (error instanceof Error) {
-          throw new Error(`Failed to search biomedical data with Valyu: ${error.message}`);
+          throw new Error(`Failed to search with Valyu: ${error.message}`);
         }
         throw error;
       }
