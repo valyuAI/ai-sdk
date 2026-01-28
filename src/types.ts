@@ -74,6 +74,13 @@ export interface ValyuWebSearchConfig extends ValyuBaseConfig {
    * Category to focus the search on
    */
   category?: string;
+
+  /**
+   * Enable fast mode for quicker responses with shorter content.
+   * Ideal for general-purpose queries where speed is preferred over detail.
+   * Default: false
+   */
+  fastMode?: boolean;
 }
 
 /**
