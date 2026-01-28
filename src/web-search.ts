@@ -64,6 +64,9 @@ export function webSearch(config: ValyuWebSearchConfig = {}) {
       if (otherOptions.responseLength !== undefined) {
         requestBody.response_length = otherOptions.responseLength;
       }
+      if (otherOptions.fastMode !== undefined) {
+        requestBody.fast_mode = otherOptions.fastMode;
+      }
       // Priority: input params > config options
       if (includedSources && includedSources.length > 0) {
         requestBody.included_sources = includedSources;
