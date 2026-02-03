@@ -1,6 +1,6 @@
 # @valyu/ai-sdk
 
-AI SDK tools for Valyu search API, built for Vercel AI SDK v5.
+AI SDK tools for Valyu search API, compatible with Vercel AI SDK v5 and v6.
 
 ## Installation
 
