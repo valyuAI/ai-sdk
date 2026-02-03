@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { ValyuPaperSearchConfig } from "./types.js";
 
 /**
- * Creates a research paper search tool powered by Valyu for use with Vercel AI SDK
+ * Creates a research paper search tool powered by Valyu for use with Vercel AI SDK v5 and v6
  *
  * @param config - Configuration options for the Valyu paper search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
