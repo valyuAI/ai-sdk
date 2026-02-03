@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { ValyuWebSearchConfig } from "./types.js";
 
 /**
- * Creates a web search tool powered by Valyu for use with Vercel AI SDK
+ * Creates a web search tool powered by Valyu for use with Vercel AI SDK v5 and v6
  *
  * @param config - Configuration options for the Valyu web search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
