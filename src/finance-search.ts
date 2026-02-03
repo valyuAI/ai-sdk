@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { ValyuFinanceSearchConfig } from "./types.js";
 
 /**
- * Creates a finance search tool powered by Valyu for use with Vercel AI SDK
+ * Creates a finance search tool powered by Valyu for use with Vercel AI SDK v5 and v6
  *
  * @param config - Configuration options for the Valyu finance search
  * @returns A tool that can be used with AI SDK's generateText, streamText, etc.
